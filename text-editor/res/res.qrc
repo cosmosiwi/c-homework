@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/new/prefix1">
+        <file>color-palette.png</file>
+        <file>files.png</file>
+        <file>font.png</file>
+        <file>new-file.png</file>
+        <file>open-file.png</file>
+        <file>paste.png</file>
+        <file>save-file.png</file>
+        <file>note.png</file>
+        <file>bold.png</file>
+        <file>italic.png</file>
+        <file>underline.png</file>
+    </qresource>
+</RCC>
