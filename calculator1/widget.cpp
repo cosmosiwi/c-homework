@@ -2,6 +2,10 @@
 #include "QDebug"
 #include "cmath"
 #include "ui_widget.h"
+#include "QToolBar"
+#include "QStatusBar"
+#include <QMainWindow>
+#include "mortgage.h"
 
 Widget::Widget(QWidget *parent)
   : QWidget(parent)
@@ -9,10 +13,17 @@ Widget::Widget(QWidget *parent)
 {
   ui->setupUi(this);
   ui->lineEdit->setReadOnly(true);//只读模式
-  ui->lineEdit->move(QPoint(0,0));//设置lineEdit位置
+  //ui->lineEdit->move(QPoint(0,0));//设置lineEdit位置
   ui->lineEdit->setAlignment(Qt::AlignRight);//从右侧显示
   setWindowTitle(QString("简易计算器"));//设置标题
+  QAction* mortgage = new QAction("利息计算器");
+  QToolBar* tool = new QToolBar(this);
+  tool->addAction(mortgage);
 
+  connect(mortgage, &QAction::triggered, this, [=](){
+    Mortgage* m = new Mortgage();
+    m->show();
+    ;});
   connects();
 }
 
@@ -24,7 +35,7 @@ Widget::~Widget()
 bool check(QCharRef c){
   return (c >= '0' && c <= '9');
 }
-
+//用中缀表达式计算
 void Widget::getInfix(){
   for(int i = 0; i < in.size(); i++){
     QString num, op;
@@ -51,6 +62,7 @@ void Widget::getInfix(){
         qDebug() << i;
         continue;
       }
+      //cos c sin s sqrt q
       op = in[i];
       out.push_back(op);
     }
@@ -100,20 +112,20 @@ double cal(double a, char op, double b){
   if(op == '^')return pow(a, b);
 }
 
-
+bool expressionError = false;
 
 void Widget::calInfix(){
   QStack<double> num; QStack<char> optr;
   optr.push('\0');
   int pos = 0;
-  qDebug() << out.size();
+  //qDebug() << out.size();
   while(!optr.empty()){
+    //qDebug() << " asdasd " <<optr.top();
     bool is_num = false;
     if(pos < out.size())out[pos].toDouble(&is_num);
     char op;
     if(pos == out.size())op = '\0';
     if(!is_num && pos < out.size()) op = out[pos].at(0).unicode(); // QString数据类型转char类型
-
     if(is_num){
       double number = out[pos].toDouble();
       num.push_back(number);
@@ -126,13 +138,23 @@ void Widget::calInfix(){
         {optr.pop(); pos++; break;}
       case '>':{
         char _op = optr.pop();
-        double opNum2 = num.pop(); double opNum1 = num.pop();
+        if(num.empty()){
+          expressionError = true;
+          return;
+        }
+        double opNum2 = num.pop();
+        if(num.empty()){
+          expressionError = true;
+          return;
+        }
+        double opNum1 = num.pop();
         num.push(cal(opNum1, _op, opNum2));
       }
     }
     //qDebug() << num.top() << " op: " << op << " opsize " << optr.size();
   }
-  result = num.top();
+  if(!num.empty())result = num.top();
+  else result = 0;
 }
 
 void Widget::init(){
@@ -215,14 +237,10 @@ void Widget ::pushButton_point_clicked(){
 void Widget ::pushButton_equal_clicked(){
   in = ui->lineEdit->text();
   getInfix();
-  try {
     calInfix();
     ui->lineEdit->clear();
-    ui->lineEdit->setText(QString("%1").arg(result));
-  } catch (...) {
-    ui->lineEdit->setText(QString("%1").arg("Expression Error"));
-  }
-
+    if(!expressionError)ui->lineEdit->setText(QString("%1").arg(result));
+    else ui->lineEdit->setText("expression error");
 }
 void Widget ::pushButton_delete_clicked(){
   ui->lineEdit->clear();

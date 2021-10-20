@@ -2,5 +2,9 @@
     <qresource prefix="/new/prefix1">
         <file>res/timg.jpg</file>
         <file>res/Babara.jpg</file>
+        <file>res/OIP-C (1).jpg</file>
+        <file>res/OIP-C (2).jpg</file>
+        <file>res/OIP-C (3).jpg</file>
+        <file>res/OIP-C.jpg</file>
     </qresource>
 </RCC>

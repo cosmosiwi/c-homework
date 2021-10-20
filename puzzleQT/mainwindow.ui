@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="res.qrc">
+    <normaloff>:/new/prefix1/res/Babara.jpg</normaloff>:/new/prefix1/res/Babara.jpg</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="reset">
     <property name="geometry">
@@ -55,8 +59,8 @@
     </property>
     <property name="font">
      <font>
-      <family>Consolas</family>
-      <pointsize>13</pointsize>
+      <family>华文隶书</family>
+      <pointsize>14</pointsize>
       <kerning>true</kerning>
      </font>
     </property>
@@ -80,6 +84,19 @@
      </font>
     </property>
    </widget>
+   <widget class="QLabel" name="picture">
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>570</y>
+      <width>171</width>
+      <height>241</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -93,6 +110,8 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections/>
 </ui>

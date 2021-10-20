@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "finddialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -15,6 +16,8 @@ class MainWindow : public QMainWindow
 public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
+
+friend FindDialog;
 
 private slots:
   void fileNew();
@@ -31,6 +34,7 @@ private slots:
   void editItalic();
 
   void on_tabWidget_tabCloseRequested(int index);
+  void serchStr(const QString &str);
 
 private:
   Ui::MainWindow *ui;
@@ -38,7 +42,11 @@ private:
   QTextEdit *te;
   QVector<QTextEdit*> Te;
   QTabWidget *centralWin;
+  FindDialog *findDialog;
+
   void init();
   int file_count = 0;
+
+  int clickCount1 = 0, clickCount2 = 0, clickCount3 = 0;
 };
 #endif // MAINWINDOW_H

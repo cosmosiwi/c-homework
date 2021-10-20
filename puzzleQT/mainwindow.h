@@ -49,6 +49,11 @@ private:
   void selectLogic();
   QVector<int> in_ord;
 
+  QPixmap playPicture[5];
+  int playNum = 0;
+  QPixmap curr;
+  MyLabel *lab;
+
   //响应鼠标事件
   bool isClicked = false;
   //计时器

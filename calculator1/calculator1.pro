@@ -17,12 +17,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
+    mortgage.cpp \
+    mymortgage.cpp \
     widget.cpp
 
 HEADERS += \
+    mortgage.h \
+    mymortgage.h \
     widget.h
 
 FORMS += \
+    mortgage.ui \
     widget.ui
 
 # Default rules for deployment.

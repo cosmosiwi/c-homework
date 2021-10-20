@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
   file_menu->addAction(file_open);
   file_menu->addAction(file_saveas);
   file_menu->addAction(file_close);
-
+  //添加组件
   QAction *edit_setfont = new QAction(QIcon(":/new/prefix1/font.png"), "字体设置");
   QAction *edit_setcolor = new QAction(QIcon(":/new/prefix1/color-palette.png"), "颜色设置");
   QAction *edit_copy = new QAction(QIcon(":/new/prefix1/files.png"), "复制");
@@ -46,6 +46,11 @@ MainWindow::MainWindow(QWidget *parent)
   QAction *edit_setBold = new QAction(QIcon(":/new/prefix1/bold.png"), "加粗");
   QAction *edit_setItalic = new QAction(QIcon(":/new/prefix1/italic.png"), "斜体");
   QAction *edit_setUnderline = new QAction(QIcon(":/new/prefix1/underline.png"), "下划线");
+  QAction *edit_setAlignCenter = new QAction(QIcon(":/new/prefix1/center-align.png"), "居中");
+  QAction *edit_setLeft = new QAction(QIcon(":/new/prefix1/left-text-alignment-option.png"),"左对齐");
+  QAction *edit_setRight = new QAction(QIcon(":/new/prefix1/right-alignment (1).png"), "右对齐");
+  QAction *edit_find = new QAction(QIcon(":/new/prefix1/searching-magnifying-glass.png"), "查找");
+
 
   file_edit->addAction(edit_setfont);//字体设置
   file_edit->addAction(edit_setcolor);//颜色设置
@@ -56,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
   tb->addAction(file_new);
   tb->addAction(file_open);
   tb->addAction(file_saveas);
+  tb->addAction(edit_find);
 
   tb->addAction(edit_setfont);
   tb->addAction(edit_setcolor);
@@ -64,8 +70,11 @@ MainWindow::MainWindow(QWidget *parent)
   tb->addAction(edit_setUnderline);
   tb->addAction(edit_copy);
   tb->addAction(edit_paste);
+  tb->addAction(edit_setLeft);
+  tb->addAction(edit_setAlignCenter);
+  tb->addAction(edit_setRight);
 
-  //设置文本区
+  //设置文本区 新建弹出新窗口
   centralWin = new QTabWidget();
   centralWin->setTabsClosable(true);
   this->setCentralWidget(centralWin);
@@ -84,8 +93,36 @@ MainWindow::MainWindow(QWidget *parent)
   connect(edit_setItalic, &QAction::triggered, this, [=](){editItalic();});
   connect(edit_setUnderline, &QAction::triggered, this, [=](){
     if(Te.size() == 0)return;
-    te->setFontUnderline(true);
+    clickCount3++;
+    clickCount3 %= 2;
+    if(clickCount3&1)
+      te->setFontUnderline(true);
+    else
+      te->setFontUnderline(false);
+    //te->setAlignment(Qt::AlignCenter);
   });
+  connect(edit_setLeft, &QAction::triggered, this, [=](){
+      te->setAlignment(Qt::AlignLeft);
+  });
+  connect(edit_setAlignCenter, &QAction::triggered, this, [=](){
+      te->setAlignment(Qt::AlignCenter);
+  });
+  connect(edit_setRight, &QAction::triggered, this, [=](){
+      te->setAlignment(Qt::AlignRight);
+  });
+  connect(edit_find, &QAction::triggered, this, [=](){
+    findDialog = new FindDialog;
+    findDialog->show();
+    connect(findDialog,SIGNAL(searchSignal(QString)),this,SLOT(serchStr(const QString)));
+  });
+}
+
+void MainWindow::serchStr(const QString &str)
+{
+    te->find(str,QTextDocument::FindBackward);
+    QPalette pale = te->palette();
+    pale.setColor(QPalette::Highlight,pale.color(QPalette::Active,QPalette::Highlight));
+    te->setPalette(pale);
 }
 
 void MainWindow::fileNew(){
@@ -155,35 +192,47 @@ int MainWindow::fileClose(){
 }
 
 void MainWindow::editColor(){
-  //if(Te.size() == 0)return;
+  if(Te.size() == 0)return;
   te->setTextColor(QColorDialog::getColor());
 }
 
 void MainWindow::editFont(){
   bool ok;
-  //if(Te.size() == 0)return;
+  if(Te.size() == 0)return;
   te->setCurrentFont(QFontDialog::getFont(&ok));
 }
 
 void MainWindow::editCopy(){
-  //if(Te.size() == 0)return;
+  if(Te.size() == 0)return;
   te->copy();
 }
 
 void MainWindow::editPaste(){
-  //if(Te.size() == 0)return;
+  if(Te.size() == 0)return;
   te->paste();
 }
 
 void MainWindow::editBold(){
-  //if(Te.size() == 0)return;
+  if(Te.size() == 0)return;
   //QFont font ( "Microsoft YaHei", 10, 75);
+  clickCount1++;
+  clickCount1 %= 2;
+  if(clickCount1&1)
   te->setFontWeight(75);
+  else {
+    te->setFontWeight(false);
+  }
 }
 
 void MainWindow::editItalic(){
-  //if(Te.size() == 0)return;
+  if(Te.size() == 0)return;
+  clickCount2++;
+  clickCount2 %= 2;
+  if(clickCount2&1)
   te->setFontItalic(true);
+  else{
+    te->setFontItalic(false);
+  }
 }
 
 MainWindow::~MainWindow()

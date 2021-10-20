@@ -6,8 +6,7 @@
 #include <level.h>
 #include <mylabel.h>
 #include <success.h>
-
-int num = 9*8*7*6*5*4*3*2*1;
+#include "QToolBar"
 
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent)
@@ -15,11 +14,21 @@ MainWindow::MainWindow(QWidget *parent)
 {
   ui->setupUi(this);
   ui->spinBox->setRange(3, 10);
+  playPicture[0] = QPixmap(":/new/prefix1/res/timg.jpg");
+  playPicture[1] = QPixmap(":/new/prefix1/res/OIP-C (1).jpg");
+  playPicture[2] = QPixmap(":/new/prefix1/res/OIP-C (2).jpg");
+  playPicture[3] = QPixmap(":/new/prefix1/res/OIP-C (3).jpg");
+  playPicture[4] = QPixmap(":/new/prefix1/res/OIP-C.jpg");
+
   showIcon(3);
   init();
   connect(ui->reset, &QPushButton::clicked, this, [=](){resetLogic(levelNum);});
   connect(ui->difficulty, &QPushButton::clicked, this, [=](){selectLogic();});
+
+
 }
+
+
 
 void MainWindow::selectLogic(){
   levelNum = ui->spinBox->value();
@@ -30,9 +39,15 @@ MainWindow::~MainWindow()
 {
   delete ui;
 }
-
+//这个函数是用来切割图片的
 void MainWindow::showIcon(int level){
-  QPixmap pixmap(":/new/prefix1/res/timg.jpg");
+  playNum = (levelNum-3)%5;
+  QPixmap pixmap(playPicture[playNum]);
+  int width = ui->picture->width();
+  int height = ui->picture->height();
+  QPixmap fix = pixmap.scaled(width, height, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+  ui->picture->setPixmap(fix);
+
   qDebug() << pixmap.width() << pixmap.height();
   int labelWidth = pixmap.width()/level;
   int labelHeight = pixmap.height()/level;
@@ -44,8 +59,9 @@ void MainWindow::showIcon(int level){
   std::random_shuffle(order.begin(), order.end());
   in_ord = order;
   // 显示图片
+  //QLabel为父类实现的myLabel的lab对象
   for(int i = 0; i < level*level; i++){
-    MyLabel* lab = new MyLabel(this);
+    lab = new MyLabel(this);
     lab->resize(labelWidth, labelHeight);
     QPixmap cur = pixmap.copy(order[i]%level*labelWidth, order[i]/level*labelHeight, labelWidth, labelHeight);
     lab->move(i%level*labelWidth, i/level*labelHeight);
@@ -61,12 +77,17 @@ void MainWindow::labClickedLogic(int idNum){
   if(check())return;
   if(isClicked == false){
     isClicked = true;
-    pTimer->start(1000);
+    pTimer->start(1000);//点击 开始计时
   }
   if(clickFront == NONE){
     clickFront = idNum;
   }
-  else{
+  else {
+    //判断clickFront与idNum的关系
+    if(!(clickFront % levelNum  == idNum % levelNum || clickFront == idNum-1 || clickFront == idNum+1)){
+      clickFront = NONE;
+      return;
+    }
     MyLabel *lab1 = labList.at(clickFront).first, *lab2 = labList.at(idNum).first;
     QPixmap cur1 = labList.at(clickFront).second, cur2 = labList.at(idNum).second;
     lab1->setPixmap(cur2);
@@ -86,6 +107,10 @@ void MainWindow::labClickedLogic(int idNum){
 }
 
 void MainWindow::resetLogic(int level){
+  for(int i = 0; i < labList.size(); i++){
+    lab = labList[i].first;
+    delete lab;
+  }
   labList.clear();
   isClicked = false;
   delete pTimer;

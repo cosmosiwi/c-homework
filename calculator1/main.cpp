@@ -1,4 +1,5 @@
 #include "widget.h"
+#include "mortgage.h"
 #include "QDebug"
 #include <QApplication>
 

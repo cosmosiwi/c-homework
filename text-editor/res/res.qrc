@@ -11,5 +11,9 @@
         <file>bold.png</file>
         <file>italic.png</file>
         <file>underline.png</file>
+        <file>center-align.png</file>
+        <file>left-text-alignment-option.png</file>
+        <file>right-alignment (1).png</file>
+        <file>searching-magnifying-glass.png</file>
     </qresource>
 </RCC>
